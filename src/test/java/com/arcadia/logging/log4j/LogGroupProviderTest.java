@@ -1,4 +1,4 @@
-package io.sensefly.logging.log4j;
+package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.model.CreateLogGroupRequest;

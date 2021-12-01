@@ -1,4 +1,4 @@
-package io.sensefly.logging.log4j;
+package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.model.CreateLogStreamRequest;
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
-import static io.sensefly.logging.log4j.CloudWatchDebugger.debug;
+import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 
 class LogStreamProvider {
 
@@ -47,7 +47,7 @@ class LogStreamProvider {
           .findFirst();
 
       if(!existing.isPresent()) {
-        debug("Creates LogStream: " + name + " in LogGroup: " + logGroupName);
+        CloudWatchDebugger.debug("Creates LogStream: " + name + " in LogGroup: " + logGroupName);
         awsLogs.createLogStream(new CreateLogStreamRequest().withLogGroupName(logGroupName)
             .withLogStreamName(name));
       }

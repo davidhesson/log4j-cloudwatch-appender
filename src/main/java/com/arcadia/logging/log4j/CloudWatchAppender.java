@@ -1,4 +1,4 @@
-package io.sensefly.logging.log4j;
+package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.model.InputLogEvent;
 import org.apache.logging.log4j.core.Appender;
@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static io.sensefly.logging.log4j.CloudWatchDebugger.debug;
+import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 

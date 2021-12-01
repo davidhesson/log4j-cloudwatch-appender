@@ -1,4 +1,4 @@
-package io.sensefly.logging.log4j;
+package com.arcadia.logging.log4j;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Layout;

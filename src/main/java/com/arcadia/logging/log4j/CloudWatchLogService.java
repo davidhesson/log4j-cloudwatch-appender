@@ -1,4 +1,4 @@
-package io.sensefly.logging.log4j;
+package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
@@ -11,7 +11,7 @@ import java.time.Clock;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.sensefly.logging.log4j.CloudWatchDebugger.debug;
+import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 
 class CloudWatchLogService {
 
@@ -42,7 +42,7 @@ class CloudWatchLogService {
           .withSequenceToken(lastSequenceToken.get());
       send(request);
     } catch(Exception e) {
-      debug("Error while sending logs:", e);
+      CloudWatchDebugger.debug("Error while sending logs:", e);
     }
   }
 
@@ -51,7 +51,7 @@ class CloudWatchLogService {
       PutLogEventsResult result = awsLogs.putLogEvents(request);
       lastSequenceToken.set(result.getNextSequenceToken());
     } catch(InvalidSequenceTokenException e) {
-      debug("InvalidSequenceTokenException while sending logs", e);
+      CloudWatchDebugger.debug("InvalidSequenceTokenException while sending logs", e);
       request.setSequenceToken(e.getExpectedSequenceToken());
       PutLogEventsResult result = awsLogs.putLogEvents(request);
       lastSequenceToken.set(result.getNextSequenceToken());

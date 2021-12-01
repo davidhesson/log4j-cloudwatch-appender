@@ -1,4 +1,4 @@
-package io.sensefly.logging.log4j;
+package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.model.CreateLogGroupRequest;
@@ -8,7 +8,7 @@ import com.amazonaws.services.logs.model.LogGroup;
 
 import java.util.Optional;
 
-import static io.sensefly.logging.log4j.CloudWatchDebugger.debug;
+import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 
 class LogGroupProvider {
 
@@ -28,7 +28,7 @@ class LogGroupProvider {
           .findFirst();
 
       if(!existing.isPresent()) {
-        debug("Creates LogGroup: " + name);
+        CloudWatchDebugger.debug("Creates LogGroup: " + name);
         awsLogs.createLogGroup(new CreateLogGroupRequest().withLogGroupName(name));
       }
     }
