@@ -1,10 +1,7 @@
 package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.model.InputLogEvent;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.Core;
-import org.apache.logging.log4j.core.Layout;
-import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.*;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
@@ -52,8 +49,9 @@ public class CloudWatchAppender extends AbstractAppender {
       String logStreamNamePrefix,
       int queueLength,
       int messagesBatchSize,
-      Layout<Serializable> layout) {
-    this(name, queueLength, messagesBatchSize, layout, new CloudWatchLogService(logGroupName, retentionPeriodDays, logStreamNamePrefix));
+      Layout<Serializable> layout,
+      Filter filter) {
+    this(name, queueLength, messagesBatchSize, layout, filter, new CloudWatchLogService(logGroupName, retentionPeriodDays, logStreamNamePrefix));
   }
 
   // visible for testing
@@ -62,8 +60,9 @@ public class CloudWatchAppender extends AbstractAppender {
       int queueLength,
       int messagesBatchSize,
       Layout<Serializable> layout,
+      Filter filter,
       CloudWatchLogService cloudWatchLogService) {
-    super(name, null, layout == null ? PatternLayout.createDefaultLayout() : layout, false);
+    super(name, filter, layout == null ? PatternLayout.createDefaultLayout() : layout, false);
     this.messagesBatchSize = messagesBatchSize;
     this.cloudWatchLogService = cloudWatchLogService;
     logEventsQueue = new LinkedBlockingQueue<>(queueLength);
@@ -80,8 +79,9 @@ public class CloudWatchAppender extends AbstractAppender {
       @PluginAttribute("logStreamNamePrefix") String logStreamNamePrefix,
       @PluginAttribute(value = "queueLength", defaultInt = DEFAULT_QUEUE_LENGTH) int queueLength,
       @PluginAttribute(value = "messagesBatchSize", defaultInt = DEFAULT_MESSAGE_BATCH_SIZE) int messagesBatchSize,
-      @PluginElement("Layout") Layout<Serializable> layout) {
-    return new CloudWatchAppender(name, logGroupName, retentionPeriodDays, logStreamNamePrefix, queueLength, messagesBatchSize, layout);
+      @PluginElement("Layout") Layout<Serializable> layout,
+      @PluginElement("Filter") Filter filter) {
+    return new CloudWatchAppender(name, logGroupName, retentionPeriodDays, logStreamNamePrefix, queueLength, messagesBatchSize, layout, filter);
   }
 
   @Override

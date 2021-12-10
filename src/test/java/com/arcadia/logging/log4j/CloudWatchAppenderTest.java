@@ -32,7 +32,7 @@ public class CloudWatchAppenderTest {
   public void testLogger() {
 
     Layout layout = PatternLayout.newBuilder().withPattern(SIMPLE_CONVERSION_PATTERN).build();
-    CloudWatchAppender appender = new CloudWatchAppender("test-appender", 1, 128, layout, cloudWatchLogService);
+    CloudWatchAppender appender = new CloudWatchAppender("test-appender", 1, 128, layout, null, cloudWatchLogService);
 
     appender.start();
     try {
