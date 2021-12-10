@@ -43,7 +43,7 @@ public class CloudWatchLogServiceTest {
 
   @Test
   public void should_send_message() {
-    CloudWatchLogService service = new CloudWatchLogService(GROUP_NAME, STREAM_NAME_PREFIX, awsLogs, clock);
+    CloudWatchLogService service = new CloudWatchLogService(GROUP_NAME, CloudWatchAppender.DEFAULT_INFINITE_RETENTION, STREAM_NAME_PREFIX, awsLogs, clock);
 
     long now = System.currentTimeMillis();
     List<InputLogEvent> events = newArrayList(
@@ -63,7 +63,7 @@ public class CloudWatchLogServiceTest {
 
   @Test
   public void send_message_should_support_sequence_token_error() {
-    CloudWatchLogService service = new CloudWatchLogService(GROUP_NAME, STREAM_NAME_PREFIX, awsLogs, clock);
+    CloudWatchLogService service = new CloudWatchLogService(GROUP_NAME, CloudWatchAppender.DEFAULT_INFINITE_RETENTION, STREAM_NAME_PREFIX, awsLogs, clock);
     when(awsLogs.putLogEvents(any(PutLogEventsRequest.class)))
         .thenThrow(new InvalidSequenceTokenException("error").withExpectedSequenceToken("token"));
 

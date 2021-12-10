@@ -39,7 +39,7 @@ public class LogGroupProviderTest {
         .thenReturn(result);
 
     LogGroupProvider provider = new LogGroupProvider(awsLogs);
-    provider.ensureExists(GROUP_NAME);
+    provider.ensureExists(GROUP_NAME, CloudWatchAppender.DEFAULT_INFINITE_RETENTION);
 
     verify(awsLogs, never()).createLogGroup(any(CreateLogGroupRequest.class));
   }
@@ -51,7 +51,7 @@ public class LogGroupProviderTest {
         .thenReturn(new DescribeLogGroupsResult());
 
     LogGroupProvider provider = new LogGroupProvider(awsLogs);
-    provider.ensureExists(GROUP_NAME);
+    provider.ensureExists(GROUP_NAME, CloudWatchAppender.DEFAULT_INFINITE_RETENTION);
 
     ArgumentCaptor<CreateLogGroupRequest> groupCaptor = ArgumentCaptor.forClass(CreateLogGroupRequest.class);
     verify(awsLogs, times(1)).createLogGroup(groupCaptor.capture());

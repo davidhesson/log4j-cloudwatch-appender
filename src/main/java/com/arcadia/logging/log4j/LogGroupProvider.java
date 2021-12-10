@@ -1,10 +1,7 @@
 package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.AWSLogs;
-import com.amazonaws.services.logs.model.CreateLogGroupRequest;
-import com.amazonaws.services.logs.model.DescribeLogGroupsRequest;
-import com.amazonaws.services.logs.model.DescribeLogGroupsResult;
-import com.amazonaws.services.logs.model.LogGroup;
+import com.amazonaws.services.logs.model.*;
 
 import java.util.Optional;
 
@@ -18,7 +15,7 @@ class LogGroupProvider {
     this.awsLogs = awsLogs;
   }
 
-  void ensureExists(String name) {
+  void ensureExists(String name, int retentionPeriodDays) {
     DescribeLogGroupsRequest request = new DescribeLogGroupsRequest().withLogGroupNamePrefix(name);
 
     DescribeLogGroupsResult groupsResult = awsLogs.describeLogGroups(request);
@@ -30,6 +27,11 @@ class LogGroupProvider {
       if(!existing.isPresent()) {
         CloudWatchDebugger.debug("Creates LogGroup: " + name);
         awsLogs.createLogGroup(new CreateLogGroupRequest().withLogGroupName(name));
+
+        if (retentionPeriodDays != CloudWatchAppender.DEFAULT_INFINITE_RETENTION) {
+          CloudWatchDebugger.debug("Setting log group period to " + retentionPeriodDays + " days for group " + name);
+          awsLogs.putRetentionPolicy(new PutRetentionPolicyRequest(name, retentionPeriodDays));
+        }
       }
     }
   }

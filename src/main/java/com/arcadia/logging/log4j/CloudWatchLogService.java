@@ -1,5 +1,6 @@
 package com.arcadia.logging.log4j;
 
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
 import com.amazonaws.services.logs.model.InputLogEvent;
@@ -14,23 +15,24 @@ import java.util.concurrent.atomic.AtomicReference;
 import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 
 class CloudWatchLogService {
-
   private final String logGroupName;
+  private final int retentionPeriodDays;
   private final String logStreamNamePrefix;
   private final AWSLogs awsLogs;
   private final LogStreamProvider logStreamProvider;
   private final AtomicReference<String> lastSequenceToken = new AtomicReference<>();
 
-  CloudWatchLogService(String logGroupName, String logStreamNamePrefix) {
-    this(logGroupName, logStreamNamePrefix, AWSLogsClientBuilder.defaultClient(), Clock.systemUTC());
+  CloudWatchLogService(String logGroupName, int retentionPeriodDays, String logStreamNamePrefix) {
+    this(logGroupName, retentionPeriodDays, logStreamNamePrefix, AWSLogsClientBuilder.standard().withCredentials(new DefaultAWSCredentialsProviderChain()).build(), Clock.systemUTC());
   }
 
   // visible for testing
-  CloudWatchLogService(String logGroupName, String logStreamNamePrefix, AWSLogs awsLogs, Clock clock) {
+  CloudWatchLogService(String logGroupName, int retentionPeriodDays, String logStreamNamePrefix, AWSLogs awsLogs, Clock clock) {
     this.logGroupName = logGroupName;
+    this.retentionPeriodDays = retentionPeriodDays;
     this.logStreamNamePrefix = logStreamNamePrefix;
     this.awsLogs = awsLogs;
-    new LogGroupProvider(awsLogs).ensureExists(logGroupName);
+    new LogGroupProvider(awsLogs).ensureExists(logGroupName, retentionPeriodDays);
     logStreamProvider = new LogStreamProvider(awsLogs, clock);
   }
 

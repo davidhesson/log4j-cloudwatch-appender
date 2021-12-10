@@ -2,6 +2,7 @@ package com.arcadia.logging.log4j;
 
 import com.amazonaws.services.logs.model.InputLogEvent;
 import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -23,9 +24,9 @@ import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
-@Plugin(name = "CloudWatchAppender", category = "Core", elementType = Appender.ELEMENT_TYPE, printObject = true)
+@Plugin(name = "CloudWatchAppender", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
 public class CloudWatchAppender extends AbstractAppender {
-
+  public static final int DEFAULT_INFINITE_RETENTION = -1;
   private static final int DEFAULT_QUEUE_LENGTH = 1024;
   private static final int DEFAULT_MESSAGE_BATCH_SIZE = 128;
   private static final int DAEMON_SLEEP = 20;
@@ -47,11 +48,12 @@ public class CloudWatchAppender extends AbstractAppender {
   private CloudWatchAppender(
       String name,
       String logGroupName,
+      int retentionPeriodDays,
       String logStreamNamePrefix,
       int queueLength,
       int messagesBatchSize,
       Layout<Serializable> layout) {
-    this(name, queueLength, messagesBatchSize, layout, new CloudWatchLogService(logGroupName, logStreamNamePrefix));
+    this(name, queueLength, messagesBatchSize, layout, new CloudWatchLogService(logGroupName, retentionPeriodDays, logStreamNamePrefix));
   }
 
   // visible for testing
@@ -74,11 +76,12 @@ public class CloudWatchAppender extends AbstractAppender {
   public static CloudWatchAppender createAppender(
       @PluginAttribute(value = "name", defaultString = "CloudWatchAppender") String name,
       @PluginAttribute("logGroupName") @Required(message = "logGroupName is required") String logGroupName,
+      @PluginAttribute(value = "retentionPeriodDays", defaultInt = DEFAULT_INFINITE_RETENTION) int retentionPeriodDays,
       @PluginAttribute("logStreamNamePrefix") String logStreamNamePrefix,
       @PluginAttribute(value = "queueLength", defaultInt = DEFAULT_QUEUE_LENGTH) int queueLength,
       @PluginAttribute(value = "messagesBatchSize", defaultInt = DEFAULT_MESSAGE_BATCH_SIZE) int messagesBatchSize,
       @PluginElement("Layout") Layout<Serializable> layout) {
-    return new CloudWatchAppender(name, logGroupName, logStreamNamePrefix, queueLength, messagesBatchSize, layout);
+    return new CloudWatchAppender(name, logGroupName, retentionPeriodDays, logStreamNamePrefix, queueLength, messagesBatchSize, layout);
   }
 
   @Override

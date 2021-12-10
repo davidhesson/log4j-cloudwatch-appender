@@ -11,12 +11,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 
 class LogStreamProvider {
+  private static final String LOG_STREAM_UUID = UUID.randomUUID().toString();
 
-  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM");
+  // This used to be the stream name (now uses UUID)
+  //private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM");
 
   private final AWSLogs awsLogs;
   private final Clock clock;
@@ -56,9 +59,9 @@ class LogStreamProvider {
   }
 
   private String buildLogStreamName(String prefix) {
-    String date = FORMATTER.format(LocalDate.now(clock));
+    //String date = FORMATTER.format(LocalDate.now(clock));
     return prefix == null || prefix.trim().isEmpty()
-        ? date
-        : prefix + "/" + date;
+        ? LOG_STREAM_UUID
+        : prefix + "/" + LOG_STREAM_UUID;
   }
 }
