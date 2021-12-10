@@ -9,6 +9,7 @@ import com.amazonaws.services.logs.model.DescribeLogStreamsResult;
 import com.amazonaws.services.logs.model.LogGroup;
 import com.amazonaws.services.logs.model.LogStream;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -31,7 +32,7 @@ public class LogStreamProviderTest {
   private static final LocalDate CLOCK_DATE = LocalDate.of(2017, 9, 1);
   private static final String GROUP_NAME = "test_group";
   private static final String STREAM_NAME_PREFIX = "test_stream";
-  private static final String STREAM_NAME = "test_stream/2017/09";
+  private static final String STREAM_NAME = "test_stream/" + LogStreamProvider.LOG_STREAM_UUID;
 
   @Mock
   private AWSLogs awsLogs;
@@ -100,9 +101,14 @@ public class LogStreamProviderTest {
   public void stream_name_should_support_no_prefix() {
     LogStreamProvider provider = new LogStreamProvider(awsLogs, clock);
     String logStream = provider.getName(null, GROUP_NAME);
-    assertThat(logStream).isEqualTo("2017/09");
+    assertThat(logStream).isEqualTo(LogStreamProvider.LOG_STREAM_UUID);
   }
 
+  /**
+   * Notes on ignore: I ignored this because we are no longer creating streams related to months. Leaving
+   * this test case here in case we go back to one stream per month or day per app
+   */
+  @Ignore
   @Test
   public void log_stream_should_be_created_on_new_month() {
     LogStreamProvider provider = new LogStreamProvider(awsLogs, clock);
@@ -122,7 +128,7 @@ public class LogStreamProviderTest {
     when(clock.instant()).thenReturn(fixedClock.instant().plus(31, DAYS));
 
     String newLogStream = provider.getName(STREAM_NAME_PREFIX, GROUP_NAME);
-    assertThat(newLogStream).isEqualTo("test_stream/2017/10");
+    assertThat(newLogStream).isEqualTo("test_stream/" + LogStreamProvider.LOG_STREAM_UUID);
 
     ArgumentCaptor<CreateLogStreamRequest> streamCaptor = ArgumentCaptor.forClass(CreateLogStreamRequest.class);
     verify(awsLogs, times(1)).createLogStream(streamCaptor.capture());

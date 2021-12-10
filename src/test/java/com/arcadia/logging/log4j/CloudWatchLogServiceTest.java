@@ -29,7 +29,7 @@ public class CloudWatchLogServiceTest {
   private static final LocalDate CLOCK_DATE = LocalDate.of(2017, 9, 1);
   private static final String GROUP_NAME = "test_group";
   private static final String STREAM_NAME_PREFIX = "test_stream";
-  private static final String STREAM_NAME = "test_stream/2017/09";
+  private static final String STREAM_NAME = "test_stream/" + LogStreamProvider.LOG_STREAM_UUID;
 
   @Mock
   private AWSLogs awsLogs;

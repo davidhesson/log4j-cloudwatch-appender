@@ -16,7 +16,7 @@ import java.util.UUID;
 import static com.arcadia.logging.log4j.CloudWatchDebugger.debug;
 
 class LogStreamProvider {
-  private static final String LOG_STREAM_UUID = UUID.randomUUID().toString();
+  public static final String LOG_STREAM_UUID = UUID.randomUUID().toString().replace("-", "");
 
   // This used to be the stream name (now uses UUID)
   //private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM");
